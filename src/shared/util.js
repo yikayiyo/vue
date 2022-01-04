@@ -48,7 +48,7 @@ export function isObject (obj: mixed): boolean %checks {
 const _toString = Object.prototype.toString
 
 export function toRawType (value: any): string {
-  return _toString.call(value).slice(8, -1)
+  return _toString.call(value).slice(8, -1) // [object Xxxx] ---> Xxxx
 }
 
 /**
@@ -71,6 +71,9 @@ export function isValidArrayIndex (val: any): boolean {
   return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
+/*
+  当val不为空（null | undefined），且定义了then函数和catch函数时返回true
+*/
 export function isPromise (val: any): boolean {
   return (
     isDef(val) &&
@@ -81,6 +84,7 @@ export function isPromise (val: any): boolean {
 
 /**
  * Convert a value to a string that is actually rendered.
+ * val 可能是复合类型的数组|对象
  */
 export function toString (val: any): string {
   return val == null
@@ -102,6 +106,11 @@ export function toNumber (val: string): number | string {
 /**
  * Make a map and return a function for checking if a key
  * is in that map.
+ * 
+ * const m = makeMap('a,b,c,d');
+ * m('a') // true
+ * m('f') // undefined
+ * 
  */
 export function makeMap (
   str: string,
@@ -129,12 +138,13 @@ export const isReservedAttribute = makeMap('key,ref,slot,slot-scope,is')
 
 /**
  * Remove an item from an array.
+ * splice会修改原始数组 arr 
  */
 export function remove (arr: Array<any>, item: any): Array<any> | void {
   if (arr.length) {
     const index = arr.indexOf(item)
     if (index > -1) {
-      return arr.splice(index, 1)
+      return arr.splice(index, 1)  // 返回被删除的数据: [item]
     }
   }
 }
